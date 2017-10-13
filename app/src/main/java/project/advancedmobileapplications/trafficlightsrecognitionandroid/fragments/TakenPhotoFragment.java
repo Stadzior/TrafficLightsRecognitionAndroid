@@ -1,17 +1,15 @@
 package project.advancedmobileapplications.trafficlightsrecognitionandroid.fragments;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-
-import com.otaliastudios.cameraview.CameraListener;
-import com.otaliastudios.cameraview.CameraView;
-import com.otaliastudios.cameraview.SessionType;
+import android.widget.ImageView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -19,28 +17,34 @@ import butterknife.OnClick;
 import project.advancedmobileapplications.trafficlightsrecognitionandroid.R;
 import project.advancedmobileapplications.trafficlightsrecognitionandroid.interfaces.CameraViewListener;
 
-public class CameraFragment extends Fragment {
+public class TakenPhotoFragment extends Fragment {
 
-    @BindView(R.id.camera_view)
-    CameraView cameraView;
-    @BindView(R.id.take_photo_button)
-    Button takePhoto;
+    @BindView(R.id.taken_photo)
+    ImageView takenPhoto;
 
+    private byte[] jpeg;
     private CameraViewListener cameraViewListener;
 
-    public static CameraFragment newInstance() {
-        return new CameraFragment();
+    public static TakenPhotoFragment newInstance(byte[] jpeg) {
+        TakenPhotoFragment fragment = new TakenPhotoFragment();
+        Bundle args = new Bundle();
+        args.putByteArray("jpeg", jpeg);
+        fragment.setArguments(args);
+        return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            jpeg = getArguments().getByteArray("jpeg");
+        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_camera, container, false);
+        View view = inflater.inflate(R.layout.fragment_taken_photo, container, false);
         ButterKnife.bind(this, view);
         return view;
     }
@@ -48,32 +52,8 @@ public class CameraFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        cameraView.setSessionType(SessionType.PICTURE);
-        cameraView.addCameraListener(new CameraListener() {
-            @Override
-            public void onPictureTaken(byte[] jpeg) {
-                super.onPictureTaken(jpeg);
-                cameraViewListener.startPhotoPreview(jpeg);
-            }
-        });
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        cameraView.start();
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        cameraView.stop();
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        cameraView.destroy();
+        Bitmap bitmap = BitmapFactory.decodeByteArray(jpeg, 0, jpeg.length);
+        takenPhoto.setImageBitmap(bitmap);
     }
 
     @Override
@@ -85,13 +65,14 @@ public class CameraFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
-        if (cameraViewListener != null)
+        if (cameraViewListener != null) {
             cameraViewListener = null;
+        }
     }
 
-    @OnClick(R.id.take_photo_button)
-    public void onClickTakePhoto() {
-        cameraView.capturePicture();
+    @OnClick(R.id.taken_photo)
+    public void onClickPhoto() {
+        cameraViewListener.startCameraFragment(true);
     }
 
 }
