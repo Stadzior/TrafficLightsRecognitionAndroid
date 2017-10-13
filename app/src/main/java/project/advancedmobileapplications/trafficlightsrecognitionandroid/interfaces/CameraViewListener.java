@@ -3,7 +3,7 @@ package project.advancedmobileapplications.trafficlightsrecognitionandroid.inter
 import android.support.v4.app.Fragment;
 
 /**
- * Created by patry on 13.10.2017.
+ * Created by Patryk Rutkowski on 13.10.2017.
  */
 
 public interface CameraViewListener {
