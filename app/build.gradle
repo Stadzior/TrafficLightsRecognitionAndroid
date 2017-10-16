@@ -17,7 +17,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-    sourceSets { main { jni.srcDirs = ['src/main/jni', 'src/main/jniLibs']}}
+    sourceSets { main { jni.srcDirs = ['app/src/main/jni', 'app/src/main/jniLibs']}}
 }
 
 dependencies {
@@ -25,6 +25,7 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
+    compile project(':openCVLibrary330')
     testCompile 'junit:junit:4.12'
     compile 'com.otaliastudios:cameraview:1.2.3'
     compile 'com.android.support:appcompat-v7:26.0.2'
@@ -34,6 +35,4 @@ dependencies {
     compile 'com.jakewharton:butterknife:8.8.1'
     compile 'com.android.support:support-v4:26.0.2'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
-    compile project(':openCVLibrary330')
-
 }

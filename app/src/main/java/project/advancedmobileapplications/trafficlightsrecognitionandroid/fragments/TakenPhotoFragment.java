@@ -6,16 +6,27 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.Toast;
+
+import org.opencv.android.InstallCallbackInterface;
+import org.opencv.android.LoaderCallbackInterface;
+import org.opencv.android.OpenCVLoader;
+import org.opencv.android.Utils;
+import org.opencv.core.Mat;
+import org.opencv.imgproc.Imgproc;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import project.advancedmobileapplications.trafficlightsrecognitionandroid.R;
+import project.advancedmobileapplications.trafficlightsrecognitionandroid.enums.LightColor;
 import project.advancedmobileapplications.trafficlightsrecognitionandroid.interfaces.CameraViewListener;
+import project.advancedmobileapplications.trafficlightsrecognitionandroid.utils.ImageUtils;
 
 public class TakenPhotoFragment extends Fragment {
 
@@ -50,10 +61,28 @@ public class TakenPhotoFragment extends Fragment {
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
+    public void onResume() {
+        super.onResume();
         Bitmap bitmap = BitmapFactory.decodeByteArray(jpeg, 0, jpeg.length);
         takenPhoto.setImageBitmap(bitmap);
+        if (OpenCVLoader.initDebug()) {
+            LightColor lightColor = ImageUtils.checkPhoto(bitmap);
+            switch (lightColor) {
+                case RED:
+                    Toast.makeText(getContext(), "CZERWONE", Toast.LENGTH_SHORT).show();
+                    break;
+                case GREEN:
+                    Toast.makeText(getContext(), "ZIELONE", Toast.LENGTH_SHORT).show();
+                    break;
+            }
+        } else {
+            Log.i("OpenCV", "OpenCV initialize failed");
+        }
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
     }
 
     @Override
