@@ -41,7 +41,7 @@ public class TakenPhotoFragment extends Fragment {
     private byte[] jpeg;
     private CameraViewListener cameraViewListener;
     private TextToSpeech textToSpeechProvider;
-
+    private boolean TextToSpeechInitialized = false;
     public static TakenPhotoFragment newInstance(byte[] jpeg) {
         TakenPhotoFragment fragment = new TakenPhotoFragment();
         Bundle args = new Bundle();
@@ -59,14 +59,15 @@ public class TakenPhotoFragment extends Fragment {
         textToSpeechProvider = new TextToSpeech(getActivity().getApplicationContext(), new TextToSpeech.OnInitListener() {
             @Override
             public void onInit(int status) {
+                TextToSpeechInitialized = false;
                 if(status == TextToSpeech.SUCCESS){
                     int result = textToSpeechProvider.setLanguage(Locale.getDefault());
-                    // Try this someday for some interesting results.
-                    // int result mTts.setLanguage(Locale.FRANCE);
                     if (result == TextToSpeech.LANG_MISSING_DATA ||
                             result == TextToSpeech.LANG_NOT_SUPPORTED) {
                         Log.e("TTS", "Language is not available.");
                     }
+                    else
+                        TextToSpeechInitialized = true;
                 } else {
                     Log.e("TTS", "Initialization of Text to speach failed.");
                 }
@@ -126,6 +127,13 @@ public class TakenPhotoFragment extends Fragment {
         super.onAttach(context);
         cameraViewListener = (CameraViewListener) context;
     }
+
+//    @Override
+//    public void onStop(){
+//        super.onStop();
+//        textToSpeechProvider.stop();
+//        textToSpeechProvider.shutdown();
+//    }
 
     @Override
     public void onDetach() {
