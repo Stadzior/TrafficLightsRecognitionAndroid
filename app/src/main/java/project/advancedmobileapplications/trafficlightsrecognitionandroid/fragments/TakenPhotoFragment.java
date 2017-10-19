@@ -1,9 +1,12 @@
 package project.advancedmobileapplications.trafficlightsrecognitionandroid.fragments;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Build;
 import android.os.Bundle;
+import android.speech.tts.TextToSpeech;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -20,6 +23,8 @@ import org.opencv.android.Utils;
 import org.opencv.core.Mat;
 import org.opencv.imgproc.Imgproc;
 
+import java.util.Locale;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -35,6 +40,7 @@ public class TakenPhotoFragment extends Fragment {
 
     private byte[] jpeg;
     private CameraViewListener cameraViewListener;
+    private TextToSpeech textToSpeechProvider;
 
     public static TakenPhotoFragment newInstance(byte[] jpeg) {
         TakenPhotoFragment fragment = new TakenPhotoFragment();
@@ -50,6 +56,33 @@ public class TakenPhotoFragment extends Fragment {
         if (getArguments() != null) {
             jpeg = getArguments().getByteArray("jpeg");
         }
+
+        Intent m_intent = new Intent();
+        m_intent.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
+        startActivityForResult(m_intent, 0);
+        textToSpeechProvider = new TextToSpeech(getActivity().getApplicationContext(), new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int status) {
+                if(status == TextToSpeech.SUCCESS){
+                    int result = textToSpeechProvider.setLanguage(Locale.US);
+                    // Try this someday for some interesting results.
+                    // int result mTts.setLanguage(Locale.FRANCE);
+                    if (result == TextToSpeech.LANG_MISSING_DATA ||
+                            result == TextToSpeech.LANG_NOT_SUPPORTED) {
+                        Log.e("TTS", "Language is not available.");
+                    } else {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                            textToSpeechProvider.speak("Elo mordeczki",TextToSpeech.QUEUE_FLUSH, null, null);
+                        } else {
+                            textToSpeechProvider.speak("Elo mordeczki", TextToSpeech.QUEUE_FLUSH, null);
+                        }
+                    }
+                } else {
+                    Log.e("TTS", "Initialization of Text to speach failed.");
+                }
+            }
+        });
+
     }
 
     @Override
@@ -69,10 +102,21 @@ public class TakenPhotoFragment extends Fragment {
             LightColor lightColor = ImageUtils.checkPhoto(bitmap);
             switch (lightColor) {
                 case RED:
+                {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        textToSpeechProvider.speak("Elo mordeczki",TextToSpeech.QUEUE_FLUSH, null, null);
+                    } else {
+                        textToSpeechProvider.speak("Elo mordeczki", TextToSpeech.QUEUE_FLUSH, null);
+                    }
                     Toast.makeText(getContext(), "CZERWONE", Toast.LENGTH_SHORT).show();
                     break;
+                }
                 case GREEN:
-                    Toast.makeText(getContext(), "ZIELONE", Toast.LENGTH_SHORT).show();
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        textToSpeechProvider.speak("Elo mordeczki",TextToSpeech.QUEUE_FLUSH, null, null);
+                    } else {
+                        textToSpeechProvider.speak("Elo mordeczki", TextToSpeech.QUEUE_FLUSH, null);
+                    }
                     break;
             }
         } else {
