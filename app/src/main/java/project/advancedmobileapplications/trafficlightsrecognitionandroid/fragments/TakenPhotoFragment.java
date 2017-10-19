@@ -1,7 +1,6 @@
 package project.advancedmobileapplications.trafficlightsrecognitionandroid.fragments;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Build;
@@ -16,12 +15,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import org.opencv.android.InstallCallbackInterface;
-import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
-import org.opencv.android.Utils;
-import org.opencv.core.Mat;
-import org.opencv.imgproc.Imgproc;
 
 import java.util.Locale;
 
@@ -86,29 +80,28 @@ public class TakenPhotoFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        Bitmap bitmap = BitmapFactory.decodeByteArray(jpeg, 0, jpeg.length);
-        takenPhoto.setImageBitmap(bitmap);
+        takenPhoto.setImageBitmap(ImageUtils.decodeSampledBitmapFromResource(jpeg, 512, 512));
         if (OpenCVLoader.initDebug()) {
-            LightColor lightColor = ImageUtils.checkPhoto(bitmap);
+            LightColor lightColor = ImageUtils.checkPhoto(jpeg);
             switch (lightColor) {
                 case RED:
                 {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        textToSpeechProvider.speak("Czerwone",TextToSpeech.QUEUE_FLUSH, null, null);
+                        textToSpeechProvider.speak(getString(R.string.red),TextToSpeech.QUEUE_FLUSH, null, null);
                     } else {
-                        textToSpeechProvider.speak("Czerwone", TextToSpeech.QUEUE_FLUSH, null);
+                        textToSpeechProvider.speak(getString(R.string.red), TextToSpeech.QUEUE_FLUSH, null);
                     }
-                    Toast.makeText(getContext(), "CZERWONE", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), getString(R.string.red), Toast.LENGTH_SHORT).show();
                     break;
                 }
                 case GREEN:
                 {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        textToSpeechProvider.speak("Zielone",TextToSpeech.QUEUE_FLUSH, null, null);
+                        textToSpeechProvider.speak(getString(R.string.green),TextToSpeech.QUEUE_FLUSH, null, null);
                     } else {
-                        textToSpeechProvider.speak("Zielone", TextToSpeech.QUEUE_FLUSH, null);
+                        textToSpeechProvider.speak(getString(R.string.green), TextToSpeech.QUEUE_FLUSH, null);
                     }
-                    Toast.makeText(getContext(), "ZIELONE", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), getString(R.string.green), Toast.LENGTH_SHORT).show();
                     break;
                 }
             }

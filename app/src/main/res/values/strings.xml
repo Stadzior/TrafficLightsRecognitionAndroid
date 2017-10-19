@@ -2,4 +2,6 @@
     <string name="app_name">TrafficLightsRecognitionAndroid</string>
 
     <string name="take_photo">zrób zdjęcie</string>
+    <string name="red">Czerweone</string>
+    <string name="green">Zielone</string>
 </resources>

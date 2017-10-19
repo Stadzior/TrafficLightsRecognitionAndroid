@@ -1,6 +1,7 @@
 package project.advancedmobileapplications.trafficlightsrecognitionandroid.utils;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 
 import org.opencv.android.Utils;
 import org.opencv.core.Core;
@@ -23,8 +24,8 @@ public class ImageUtils {
     private static Scalar lowerLowHueBottom = new Scalar(85, 64, 200);
     private static Scalar lowerLowHueTop = new Scalar(170, 255, 255);
 
-    public static LightColor checkPhoto(Bitmap bmp) {
-        Mat originalImage = bitmapToMat(bmp);
+    public static LightColor checkPhoto(byte[] bmp) {
+        Mat originalImage = bitmapToMat(decodeSampledBitmapFromResource(bmp, 512, 512));
 
         Mat imgWithoutNoise = new Mat();
         Imgproc.medianBlur(originalImage, imgWithoutNoise, 3);
@@ -47,8 +48,8 @@ public class ImageUtils {
 
     private static Mat bitmapToMat(Bitmap bmp) {
         Mat mat = new Mat();
-        Bitmap bmp32 = bmp.copy(Bitmap.Config.ARGB_8888, true);
-        Utils.bitmapToMat(bmp32, mat);
+        //Bitmap bmp32 = bmp.copy(Bitmap.Config.ARGB_8888, true);
+        Utils.bitmapToMat(bmp, mat);
         return mat;
     }
 
@@ -65,6 +66,45 @@ public class ImageUtils {
         Core.inRange(src, low, upper, mask);
         Core.bitwise_and(src, src, outputImage, mask);
         return outputImage;
+    }
+
+    private static int calculateInSampleSize(
+            BitmapFactory.Options options, int reqWidth, int reqHeight) {
+        // Raw height and width of image
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+        int inSampleSize = 1;
+
+        if (height > reqHeight || width > reqWidth) {
+
+            final int halfHeight = height / 2;
+            final int halfWidth = width / 2;
+
+            // Calculate the largest inSampleSize value that is a power of 2 and keeps both
+            // height and width larger than the requested height and width.
+            while ((halfHeight / inSampleSize) > reqHeight
+                    && (halfWidth / inSampleSize) > reqWidth) {
+                inSampleSize *= 2;
+            }
+        }
+
+        return inSampleSize;
+    }
+
+    public static Bitmap decodeSampledBitmapFromResource(byte[] data, int   reqWidth, int reqHeight) {
+
+        // First decode with inJustDecodeBounds=true to check dimensions
+        final BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        //options.inPurgeable = true;
+        BitmapFactory.decodeByteArray(data, 0, data.length, options);
+
+        // Calculate inSampleSize
+        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+
+        // Decode bitmap with inSampleSize set
+        options.inJustDecodeBounds = false;
+        return BitmapFactory.decodeByteArray(data, 0, data.length, options);
     }
 
 }
