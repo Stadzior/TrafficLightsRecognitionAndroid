@@ -18,6 +18,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import project.advancedmobileapplications.trafficlightsrecognitionandroid.R;
 import project.advancedmobileapplications.trafficlightsrecognitionandroid.interfaces.CameraViewListener;
+import project.advancedmobileapplications.trafficlightsrecognitionandroid.utils.ImageUtils;
 
 public class CameraFragment extends Fragment {
 
@@ -53,7 +54,7 @@ public class CameraFragment extends Fragment {
             @Override
             public void onPictureTaken(byte[] jpeg) {
                 super.onPictureTaken(jpeg);
-                cameraViewListener.startPhotoPreview(jpeg);
+                cameraViewListener.startPhotoPreview(ImageUtils.decodeSampledBitmapFromResource(jpeg, 512, 512));
             }
         });
     }

@@ -25,6 +25,7 @@ import butterknife.OnClick;
 import project.advancedmobileapplications.trafficlightsrecognitionandroid.R;
 import project.advancedmobileapplications.trafficlightsrecognitionandroid.enums.LightColor;
 import project.advancedmobileapplications.trafficlightsrecognitionandroid.interfaces.CameraViewListener;
+import project.advancedmobileapplications.trafficlightsrecognitionandroid.interfaces.TTSListener;
 import project.advancedmobileapplications.trafficlightsrecognitionandroid.utils.ImageUtils;
 
 public class TakenPhotoFragment extends Fragment {
@@ -34,8 +35,8 @@ public class TakenPhotoFragment extends Fragment {
 
     private byte[] jpeg;
     private CameraViewListener cameraViewListener;
-    private TextToSpeech textToSpeechProvider;
-    private boolean TextToSpeechInitialized = false;
+    private TTSListener ttsListener;
+
     public static TakenPhotoFragment newInstance(byte[] jpeg) {
         TakenPhotoFragment fragment = new TakenPhotoFragment();
         Bundle args = new Bundle();
@@ -50,23 +51,29 @@ public class TakenPhotoFragment extends Fragment {
         if (getArguments() != null) {
             jpeg = getArguments().getByteArray("jpeg");
         }
-        textToSpeechProvider = new TextToSpeech(getActivity().getApplicationContext(), new TextToSpeech.OnInitListener() {
-            @Override
-            public void onInit(int status) {
-                TextToSpeechInitialized = false;
-                if(status == TextToSpeech.SUCCESS){
-                    int result = textToSpeechProvider.setLanguage(Locale.getDefault());
-                    if (result == TextToSpeech.LANG_MISSING_DATA ||
-                            result == TextToSpeech.LANG_NOT_SUPPORTED) {
-                        Log.e("TTS", "Language is not available.");
-                    }
-                    else
-                        TextToSpeechInitialized = true;
-                } else {
-                    Log.e("TTS", "Initialization of Text to speach failed.");
+
+        if (OpenCVLoader.initDebug()) {
+            LightColor lightColor = ImageUtils.checkPhoto(jpeg);
+            switch (lightColor) {
+                case RED: {
+                    ttsListener.speak(getString(R.string.red));
+                    Toast.makeText(getContext(), getString(R.string.red), Toast.LENGTH_SHORT).show();
+                    break;
+                }
+                case GREEN: {
+                    ttsListener.speak(getString(R.string.green));
+                    Toast.makeText(getContext(), getString(R.string.green), Toast.LENGTH_SHORT).show();
+                    break;
                 }
             }
-        });
+        }
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        takenPhoto.setImageBitmap(ImageUtils.byteArrayToBitmap(jpeg));
     }
 
     @Override
@@ -78,62 +85,25 @@ public class TakenPhotoFragment extends Fragment {
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        takenPhoto.setImageBitmap(ImageUtils.decodeSampledBitmapFromResource(jpeg, 512, 512));
-        if (OpenCVLoader.initDebug()) {
-            LightColor lightColor = ImageUtils.checkPhoto(jpeg);
-            switch (lightColor) {
-                case RED:
-                {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        textToSpeechProvider.speak(getString(R.string.red),TextToSpeech.QUEUE_FLUSH, null, null);
-                    } else {
-                        textToSpeechProvider.speak(getString(R.string.red), TextToSpeech.QUEUE_FLUSH, null);
-                    }
-                    Toast.makeText(getContext(), getString(R.string.red), Toast.LENGTH_SHORT).show();
-                    break;
-                }
-                case GREEN:
-                {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        textToSpeechProvider.speak(getString(R.string.green),TextToSpeech.QUEUE_FLUSH, null, null);
-                    } else {
-                        textToSpeechProvider.speak(getString(R.string.green), TextToSpeech.QUEUE_FLUSH, null);
-                    }
-                    Toast.makeText(getContext(), getString(R.string.green), Toast.LENGTH_SHORT).show();
-                    break;
-                }
-            }
-        } else {
-            Log.i("OpenCV", "OpenCV initialize failed");
-        }
-    }
-
-    @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-    }
-
-    @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         cameraViewListener = (CameraViewListener) context;
+        ttsListener = (TTSListener) context;
     }
-
-//    @Override
-//    public void onStop(){
-//        super.onStop();
-//        textToSpeechProvider.stop();
-//        textToSpeechProvider.shutdown();
-//    }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        if (cameraViewListener != null) {
+        if (cameraViewListener != null)
             cameraViewListener = null;
-        }
+        if (ttsListener != null)
+            ttsListener = null;
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        cameraViewListener.startCameraFragment(true);
     }
 
     @OnClick(R.id.taken_photo)

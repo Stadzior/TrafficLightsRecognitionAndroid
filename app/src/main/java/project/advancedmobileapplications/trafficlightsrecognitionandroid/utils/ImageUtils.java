@@ -25,7 +25,7 @@ public class ImageUtils {
     private static Scalar lowerLowHueTop = new Scalar(170, 255, 255);
 
     public static LightColor checkPhoto(byte[] bmp) {
-        Mat originalImage = bitmapToMat(decodeSampledBitmapFromResource(bmp, 512, 512));
+        Mat originalImage = bitmapToMat(byteArrayToBitmap(bmp));
 
         Mat imgWithoutNoise = new Mat();
         Imgproc.medianBlur(originalImage, imgWithoutNoise, 3);
@@ -91,8 +91,7 @@ public class ImageUtils {
         return inSampleSize;
     }
 
-    public static Bitmap decodeSampledBitmapFromResource(byte[] data, int   reqWidth, int reqHeight) {
-
+    public static byte[] decodeSampledBitmapFromResource(byte[] data, int   reqWidth, int reqHeight) {
         // First decode with inJustDecodeBounds=true to check dimensions
         final BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
@@ -104,7 +103,12 @@ public class ImageUtils {
 
         // Decode bitmap with inSampleSize set
         options.inJustDecodeBounds = false;
-        return BitmapFactory.decodeByteArray(data, 0, data.length, options);
+        //return BitmapFactory.decodeByteArray(data, 0, data.length, options);
+        return data;
+    }
+
+    public static Bitmap byteArrayToBitmap(byte[] data) {
+        return BitmapFactory.decodeByteArray(data, 0, data.length);
     }
 
 }
