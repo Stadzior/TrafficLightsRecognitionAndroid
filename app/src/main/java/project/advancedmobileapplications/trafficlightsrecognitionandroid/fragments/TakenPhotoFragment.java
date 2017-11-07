@@ -33,9 +33,9 @@ public class TakenPhotoFragment extends Fragment {
     @BindView(R.id.taken_photo)
     ImageView takenPhoto;
 
-    private byte[] jpeg;
     private CameraViewListener cameraViewListener;
     private TTSListener ttsListener;
+    private Bitmap photo;
 
     public static TakenPhotoFragment newInstance(byte[] jpeg) {
         TakenPhotoFragment fragment = new TakenPhotoFragment();
@@ -48,12 +48,18 @@ public class TakenPhotoFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         if (getArguments() != null) {
-            jpeg = getArguments().getByteArray("jpeg");
+            byte[] jpeg = getArguments().getByteArray("jpeg");
+            byte[] newJpeg = new byte[jpeg.length];
+//            for (int i = 0; i < jpeg.length; i++){
+//                newJpeg[i] = (byte)(jpeg[i]*2);
+//            }
+            photo = ImageUtils.rotateImage(ImageUtils.byteArrayToBitmap(jpeg),90);
         }
 
         if (OpenCVLoader.initDebug()) {
-            LightColor lightColor = ImageUtils.checkPhoto(jpeg);
+            LightColor lightColor = ImageUtils.checkPhoto(photo);
             switch (lightColor) {
                 case RED: {
                     ttsListener.speak(getString(R.string.red));
@@ -73,7 +79,7 @@ public class TakenPhotoFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        takenPhoto.setImageBitmap(ImageUtils.byteArrayToBitmap(jpeg));
+        takenPhoto.setImageBitmap(photo);
     }
 
     @Override

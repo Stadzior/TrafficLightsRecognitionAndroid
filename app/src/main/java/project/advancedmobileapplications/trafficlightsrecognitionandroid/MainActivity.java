@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
 import java.util.Locale;
+import java.util.Random;
 
 import butterknife.ButterKnife;
 import project.advancedmobileapplications.trafficlightsrecognitionandroid.fragments.CameraFragment;

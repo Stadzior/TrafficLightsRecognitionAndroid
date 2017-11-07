@@ -2,6 +2,7 @@ package project.advancedmobileapplications.trafficlightsrecognitionandroid.utils
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 
 import org.opencv.android.Utils;
 import org.opencv.core.Core;
@@ -24,8 +25,8 @@ public class ImageUtils {
     private static Scalar lowerLowHueBottom = new Scalar(85, 64, 200);
     private static Scalar lowerLowHueTop = new Scalar(170, 255, 255);
 
-    public static LightColor checkPhoto(byte[] bmp) {
-        Mat originalImage = bitmapToMat(byteArrayToBitmap(bmp));
+    public static LightColor checkPhoto(Bitmap bmp) {
+        Mat originalImage = bitmapToMat(bmp);
 
         Mat imgWithoutNoise = new Mat();
         Imgproc.medianBlur(originalImage, imgWithoutNoise, 3);
@@ -39,6 +40,12 @@ public class ImageUtils {
         else
             return LightColor.GREEN;
 
+    }
+
+    public static Bitmap rotateImage(Bitmap source, float angle){
+        Matrix matrix = new Matrix();
+        matrix.postRotate(angle);
+        return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(), matrix, true);
     }
 
     private static Mat matToGrey(Mat mat) {
