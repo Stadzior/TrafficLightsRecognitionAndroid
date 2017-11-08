@@ -2,6 +2,8 @@ package project.advancedmobileapplications.trafficlightsrecognitionandroid.utils
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.ColorSpace;
 import android.graphics.Matrix;
 
 import org.opencv.android.Utils;
@@ -39,13 +41,51 @@ public class ImageUtils {
             return LightColor.RED;
         else
             return LightColor.GREEN;
-
     }
 
     public static Bitmap rotateImage(Bitmap source, float angle){
         Matrix matrix = new Matrix();
         matrix.postRotate(angle);
         return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(), matrix, true);
+    }
+
+    public static Bitmap ChangeImageColors(Bitmap source,int brightness , float contrastLevel){
+        if (contrastLevel > -1 && contrastLevel < 5 && brightness > -256 && brightness < 256) {
+            int[] pixels = new int[source.getHeight() * source.getWidth()];
+            source.getPixels(pixels, 0, source.getWidth(), 0, 0, source.getWidth(), source.getHeight());
+            for (int i = 0; i < pixels.length; i++)
+            {
+                int[] rgb = IntToRgb(pixels[i]);
+                for (int c = 0; c < rgb.length; c++){
+                    rgb[c] = (int)(contrastLevel*(float)rgb[c]+brightness);
+                    rgb[c] = rgb[c] > 255 ? 255 : rgb[c];
+                    rgb[c] = rgb[c] < 0 ? 0 : rgb[c];
+                }
+                pixels[i] = RgbToInt(rgb);
+            }
+            source.setPixels(pixels, 0, source.getWidth(), 0, 0, source.getWidth(), source.getHeight());
+            return Bitmap.createBitmap(source);
+        }
+        return null;
+    }
+
+    private static int[] IntToRgb(int source){
+        //String hexColor = String.format("%06X", (0xFFFFFF & source));
+        int[] rgb = new int[3];
+        rgb[0] = (source >> 16) & 0xFF;
+        rgb[1] = (source >> 8) & 0xFF;
+        rgb[2] = source & 0xFF;
+//        rgb[0] = Integer.parseInt(hexColor.substring(0,2),16);
+//        rgb[1] = Integer.parseInt(hexColor.substring(2,4),16);
+//        rgb[2] = Integer.parseInt(hexColor.substring(4,6),16);
+        return rgb;
+    }
+
+    private static int RgbToInt(int[] rgb){
+        int value = rgb[0];
+        value = (value << 8) + rgb[1];
+        value = (value << 8) + rgb[2];
+        return value;
     }
 
     private static Mat matToGrey(Mat mat) {

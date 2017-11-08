@@ -2,13 +2,8 @@ package project.advancedmobileapplications.trafficlightsrecognitionandroid.fragm
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.Build;
 import android.os.Bundle;
-import android.speech.tts.TextToSpeech;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,8 +11,6 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import org.opencv.android.OpenCVLoader;
-
-import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -51,11 +44,11 @@ public class TakenPhotoFragment extends Fragment {
 
         if (getArguments() != null) {
             byte[] jpeg = getArguments().getByteArray("jpeg");
-            byte[] newJpeg = new byte[jpeg.length];
-//            for (int i = 0; i < jpeg.length; i++){
-//                newJpeg[i] = (byte)(jpeg[i]*2);
-//            }
-            photo = ImageUtils.rotateImage(ImageUtils.byteArrayToBitmap(jpeg),90);
+            photo = ImageUtils.ChangeImageColors(
+                        ImageUtils.rotateImage(
+                            Bitmap.createScaledBitmap(
+                                ImageUtils.byteArrayToBitmap(jpeg)
+                                    ,600,400,false),90),-250,4f);
         }
 
         if (OpenCVLoader.initDebug()) {
