@@ -44,14 +44,12 @@ public class TakenPhotoFragment extends Fragment {
 
         if (getArguments() != null) {
             byte[] jpeg = getArguments().getByteArray("jpeg");
-            photo = ImageUtils.ChangeImageColors(
-                        ImageUtils.rotateImage(
-                            Bitmap.createScaledBitmap(
-                                ImageUtils.byteArrayToBitmap(jpeg)
-                                    ,600,400,false),90),-250,4f);
+            photo = ImageUtils.rotateImage(ImageUtils.byteArrayToBitmap(jpeg),90);
+            photo = Bitmap.createScaledBitmap(photo,400,600,false);
         }
 
         if (OpenCVLoader.initDebug()) {
+            photo = ImageUtils.getColorBitmap(photo, LightColor.GREEN);
             LightColor lightColor = ImageUtils.checkPhoto(photo);
             switch (lightColor) {
                 case RED: {

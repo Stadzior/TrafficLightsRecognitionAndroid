@@ -2,13 +2,10 @@ package project.advancedmobileapplications.trafficlightsrecognitionandroid.utils
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
-import android.graphics.ColorSpace;
 import android.graphics.Matrix;
 
 import org.opencv.android.Utils;
 import org.opencv.core.Core;
-import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
@@ -21,11 +18,11 @@ import project.advancedmobileapplications.trafficlightsrecognitionandroid.enums.
 
 public class ImageUtils {
 
-    private static Scalar lowerRedHueBottom = new Scalar(0, 64, 200);
-    private static Scalar lowerRedHueTop = new Scalar(69, 255, 255);
+    private static Scalar lowerGreenHueBottom = new Scalar(40, 100, 50);
+    private static Scalar lowerGreenHueTop = new Scalar(80, 255, 255);
 
-    private static Scalar lowerLowHueBottom = new Scalar(85, 64, 200);
-    private static Scalar lowerLowHueTop = new Scalar(170, 255, 255);
+    private static Scalar lowerRedHueBottom = new Scalar(85, 64, 200);
+    private static Scalar lowerRedHueTop = new Scalar(170, 255, 255);
 
     public static LightColor checkPhoto(Bitmap bmp) {
         Mat originalImage = bitmapToMat(bmp);
@@ -33,14 +30,49 @@ public class ImageUtils {
         Mat imgWithoutNoise = new Mat();
         Imgproc.medianBlur(originalImage, imgWithoutNoise, 3);
         Imgproc.cvtColor(imgWithoutNoise, imgWithoutNoise, Imgproc.COLOR_BGR2HSV);
-
-        Mat redOutput = createHueMask(imgWithoutNoise.clone(), lowerLowHueBottom, lowerLowHueTop);
-        Mat greenOutput = createHueMask(imgWithoutNoise.clone(), lowerRedHueBottom, lowerRedHueTop);
+        Mat redOutput = createHueMask(imgWithoutNoise.clone(), lowerRedHueBottom, lowerRedHueTop);
+        Mat greenOutput = createHueMask(imgWithoutNoise.clone(), lowerGreenHueBottom, lowerGreenHueTop);
 
         if (Core.countNonZero(matToGrey(redOutput)) > Core.countNonZero(matToGrey(greenOutput)))
             return LightColor.RED;
         else
             return LightColor.GREEN;
+    }
+
+    public static Bitmap addCirclesToBitmap(Bitmap bmp){
+        Mat img = bitmapToMat(bmp);
+        Mat imgWithoutNoise = new Mat();
+        Imgproc.medianBlur(img, imgWithoutNoise, 3);
+        Imgproc.cvtColor(imgWithoutNoise, imgWithoutNoise, Imgproc.COLOR_BGR2HSV);
+        Mat circles = new Mat();
+        Imgproc.HoughCircles(img, circles, Imgproc.CV_HOUGH_GRADIENT, 1d, 0);
+        return matToBitmap(circles);
+    }
+
+    public static Bitmap getColorBitmap(Bitmap bmp, LightColor desiredColor){
+        Mat img = bitmapToMat(bmp);
+        Mat imgWithoutNoise = new Mat();
+        Imgproc.medianBlur(img, imgWithoutNoise, 3);
+        Imgproc.cvtColor(imgWithoutNoise, imgWithoutNoise, Imgproc.COLOR_BGR2HSV);
+        switch (desiredColor)
+        {
+            case RED:
+            {
+                Mat redOutput = createHueMask(imgWithoutNoise.clone(), lowerRedHueBottom, lowerRedHueTop);
+                Bitmap redBmp = Bitmap.createBitmap(bmp);
+                Utils.matToBitmap(redOutput, redBmp);
+                return redBmp;
+            }
+            case GREEN:
+            {
+                Mat greenOutput = createHueMask(imgWithoutNoise.clone(), lowerGreenHueBottom, lowerGreenHueTop);
+                Bitmap greenBmp = Bitmap.createBitmap(bmp);
+                Utils.matToBitmap(greenOutput, greenBmp);
+                return greenBmp;
+            }
+            default:
+                return null;
+        }
     }
 
     public static Bitmap rotateImage(Bitmap source, float angle){
@@ -75,9 +107,6 @@ public class ImageUtils {
         rgb[0] = (source >> 16) & 0xFF;
         rgb[1] = (source >> 8) & 0xFF;
         rgb[2] = source & 0xFF;
-//        rgb[0] = Integer.parseInt(hexColor.substring(0,2),16);
-//        rgb[1] = Integer.parseInt(hexColor.substring(2,4),16);
-//        rgb[2] = Integer.parseInt(hexColor.substring(4,6),16);
         return rgb;
     }
 
