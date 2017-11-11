@@ -10,8 +10,13 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:keepScreenOn="true"
-        app:cameraSessionType="picture" />
+        app:cameraSessionType="picture" >
+    </com.otaliastudios.cameraview.CameraView>
 
+    <ToggleButton
+        android:id="@+id/toggle_map_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
     <Button
         android:id="@+id/take_photo_button"
         android:layout_width="match_parent"

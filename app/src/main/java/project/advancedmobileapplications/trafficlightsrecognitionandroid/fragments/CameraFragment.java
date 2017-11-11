@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ToggleButton;
 
 import com.otaliastudios.cameraview.CameraListener;
 import com.otaliastudios.cameraview.CameraView;
@@ -15,8 +16,10 @@ import com.otaliastudios.cameraview.SessionType;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnCheckedChanged;
 import butterknife.OnClick;
 import project.advancedmobileapplications.trafficlightsrecognitionandroid.R;
+import project.advancedmobileapplications.trafficlightsrecognitionandroid.enums.LightColor;
 import project.advancedmobileapplications.trafficlightsrecognitionandroid.interfaces.CameraViewListener;
 import project.advancedmobileapplications.trafficlightsrecognitionandroid.utils.ImageUtils;
 
@@ -26,6 +29,9 @@ public class CameraFragment extends Fragment {
     CameraView cameraView;
     @BindView(R.id.take_photo_button)
     Button takePhoto;
+    @BindView (R.id.toggle_map_button)
+    ToggleButton toggleMapButton;
+    public LightColor selectedColorMap = LightColor.GREEN;
 
     private CameraViewListener cameraViewListener;
 
@@ -95,4 +101,8 @@ public class CameraFragment extends Fragment {
         cameraView.capturePicture();
     }
 
+    @OnCheckedChanged(R.id.toggle_map_button)
+    public void onCheckedChangedToggleMap() {
+        selectedColorMap = toggleMapButton.isChecked() ? LightColor.RED : LightColor.GREEN;
+    }
 }

@@ -19,5 +19,4 @@ public enum LightColor {
     public int getId() {
         return id;
     }
-
 }

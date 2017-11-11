@@ -9,11 +9,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import org.opencv.android.OpenCVLoader;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnCheckedChanged;
 import butterknife.OnClick;
 import project.advancedmobileapplications.trafficlightsrecognitionandroid.R;
 import project.advancedmobileapplications.trafficlightsrecognitionandroid.enums.LightColor;
@@ -26,14 +28,17 @@ public class TakenPhotoFragment extends Fragment {
     @BindView(R.id.taken_photo)
     ImageView takenPhoto;
 
+
     private CameraViewListener cameraViewListener;
     private TTSListener ttsListener;
     private Bitmap photo;
+    private LightColor selectedColorMap = LightColor.GREEN;
 
-    public static TakenPhotoFragment newInstance(byte[] jpeg) {
+    public static TakenPhotoFragment newInstance(byte[] jpeg, LightColor color) {
         TakenPhotoFragment fragment = new TakenPhotoFragment();
         Bundle args = new Bundle();
         args.putByteArray("jpeg", jpeg);
+        args.putInt("color", color.getId());
         fragment.setArguments(args);
         return fragment;
     }
@@ -46,10 +51,22 @@ public class TakenPhotoFragment extends Fragment {
             byte[] jpeg = getArguments().getByteArray("jpeg");
             photo = ImageUtils.rotateImage(ImageUtils.byteArrayToBitmap(jpeg),90);
             photo = Bitmap.createScaledBitmap(photo,400,600,false);
+            int colorId = getArguments().getInt("color");
+            switch (colorId){
+                case 1:
+                    selectedColorMap = LightColor.GREEN;
+                    break;
+                case 2:
+                    selectedColorMap = LightColor.RED;
+                    break;
+                default:
+                    selectedColorMap = LightColor.MISS;
+                    break;
+            }
         }
 
         if (OpenCVLoader.initDebug()) {
-            photo = ImageUtils.getColorBitmap(photo, LightColor.GREEN);
+            photo = ImageUtils.getColorBitmap(photo, selectedColorMap);
             LightColor lightColor = ImageUtils.checkPhoto(photo);
             switch (lightColor) {
                 case RED: {
@@ -107,5 +124,4 @@ public class TakenPhotoFragment extends Fragment {
     public void onClickPhoto() {
         cameraViewListener.startCameraFragment(true);
     }
-
 }

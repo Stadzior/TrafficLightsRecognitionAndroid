@@ -1,5 +1,6 @@
 package project.advancedmobileapplications.trafficlightsrecognitionandroid;
 
+import android.graphics.Camera;
 import android.os.Build;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
@@ -12,6 +13,7 @@ import java.util.Locale;
 import java.util.Random;
 
 import butterknife.ButterKnife;
+import project.advancedmobileapplications.trafficlightsrecognitionandroid.enums.LightColor;
 import project.advancedmobileapplications.trafficlightsrecognitionandroid.fragments.CameraFragment;
 import project.advancedmobileapplications.trafficlightsrecognitionandroid.fragments.TakenPhotoFragment;
 import project.advancedmobileapplications.trafficlightsrecognitionandroid.interfaces.CameraViewListener;
@@ -35,7 +37,8 @@ public class MainActivity extends AppCompatActivity implements CameraViewListene
     @Override
     public void changeFragment(Fragment fragment, boolean addToBackStack) {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.fragment_container, fragment);
+        String fragmentTag = fragment instanceof CameraFragment ? "Camera" : "TakenPhoto";
+        transaction.replace(R.id.fragment_container, fragment, fragmentTag);
         if (addToBackStack)
             transaction.addToBackStack(fragment.getClass().getName());
         transaction.commit();
@@ -43,7 +46,9 @@ public class MainActivity extends AppCompatActivity implements CameraViewListene
 
     @Override
     public void startPhotoPreview(byte[] jpeg) {
-        changeFragment(TakenPhotoFragment.newInstance(jpeg), true);
+        Fragment cameraFragment = getSupportFragmentManager().findFragmentByTag("Camera");
+        LightColor selectedColorMap = ((CameraFragment)cameraFragment).selectedColorMap;
+        changeFragment(TakenPhotoFragment.newInstance(jpeg, selectedColorMap), true);
     }
 
     @Override
