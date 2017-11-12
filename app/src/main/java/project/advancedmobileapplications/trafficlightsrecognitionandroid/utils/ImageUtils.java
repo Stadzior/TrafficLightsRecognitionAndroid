@@ -7,8 +7,11 @@ import android.graphics.Matrix;
 import org.opencv.android.Utils;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
+import org.opencv.core.MatOfDouble;
+import org.opencv.core.MatOfRect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
+import org.opencv.objdetect.HOGDescriptor;
 
 import project.advancedmobileapplications.trafficlightsrecognitionandroid.enums.LightColor;
 
@@ -59,6 +62,7 @@ public class ImageUtils {
             case RED:
             {
                 Mat redOutput = createHueMask(imgWithoutNoise.clone(), lowerRedHueBottom, lowerRedHueTop);
+                int count = detectHumans(redOutput);
                 Bitmap redBmp = Bitmap.createBitmap(bmp);
                 Utils.matToBitmap(redOutput, redBmp);
                 return redBmp;
@@ -73,6 +77,14 @@ public class ImageUtils {
             default:
                 return null;
         }
+    }
+
+    public static int detectHumans(Mat source){
+        HOGDescriptor hog = new HOGDescriptor();
+        hog.setSVMDetector(HOGDescriptor.getDefaultPeopleDetector());
+        MatOfRect found = new MatOfRect();
+        hog.detectMultiScale(source, found, new MatOfDouble(0));
+        return found.toArray().length;
     }
 
     public static Bitmap rotateImage(Bitmap source, float angle){
