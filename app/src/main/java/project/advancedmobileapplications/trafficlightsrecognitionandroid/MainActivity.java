@@ -1,6 +1,6 @@
 package project.advancedmobileapplications.trafficlightsrecognitionandroid;
 
-import android.graphics.Camera;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
@@ -10,7 +10,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
 import java.util.Locale;
-import java.util.Random;
 
 import butterknife.ButterKnife;
 import project.advancedmobileapplications.trafficlightsrecognitionandroid.enums.LightColor;
@@ -18,6 +17,7 @@ import project.advancedmobileapplications.trafficlightsrecognitionandroid.fragme
 import project.advancedmobileapplications.trafficlightsrecognitionandroid.fragments.TakenPhotoFragment;
 import project.advancedmobileapplications.trafficlightsrecognitionandroid.interfaces.CameraViewListener;
 import project.advancedmobileapplications.trafficlightsrecognitionandroid.interfaces.TTSListener;
+import project.advancedmobileapplications.trafficlightsrecognitionandroid.services.ShakeService;
 
 public class MainActivity extends AppCompatActivity implements CameraViewListener, TTSListener {
 
@@ -27,6 +27,7 @@ public class MainActivity extends AppCompatActivity implements CameraViewListene
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        startService(new Intent(this, ShakeService.class));
         ButterKnife.bind(this);
         if (getSupportActionBar() != null)
             getSupportActionBar().hide();

@@ -3,11 +3,8 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/TrafficLightsRecognitionAndroid.iml" filepath="$PROJECT_DIR$/TrafficLightsRecognitionAndroid.iml" />
-      <module fileurl="file://C:\Users\patry\Desktop\TrafficLightsRecognitionAndroid\TrafficLightsRecognitionAndroid.iml" filepath="C:\Users\patry\Desktop\TrafficLightsRecognitionAndroid\TrafficLightsRecognitionAndroid.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://C:\Users\patry\Desktop\TrafficLightsRecognitionAndroid\app\app.iml" filepath="C:\Users\patry\Desktop\TrafficLightsRecognitionAndroid\app\app.iml" />
       <module fileurl="file://$PROJECT_DIR$/openCVLibrary330/openCVLibrary330.iml" filepath="$PROJECT_DIR$/openCVLibrary330/openCVLibrary330.iml" />
-      <module fileurl="file://C:\Users\patry\Desktop\TrafficLightsRecognitionAndroid\openCVLibrary330\openCVLibrary330.iml" filepath="C:\Users\patry\Desktop\TrafficLightsRecognitionAndroid\openCVLibrary330\openCVLibrary330.iml" />
     </modules>
   </component>
 </project>
