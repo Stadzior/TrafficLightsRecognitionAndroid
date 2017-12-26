@@ -5,15 +5,16 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 
-import com.github.tbouron.shakedetector.library.ShakeDetector;
+import com.github.nisrulz.sensey.Sensey;
+import com.github.nisrulz.sensey.WristTwistDetector;
 
 import project.advancedmobileapplications.trafficlightsrecognitionandroid.MainActivity;
 
 /**
- * Created by patry on 26.11.2017.
+ * Created by Patryk Rutkowski on 26.11.2017.
  */
 
-public class ShakeService extends Service {
+public class WristTwistGestureService extends Service {
 
     @Nullable
     @Override
@@ -23,12 +24,13 @@ public class ShakeService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        ShakeDetector.create(this, new ShakeDetector.OnShakeListener() {
-            @Override
-            public void OnShake() {
+        Sensey.getInstance().init(getBaseContext());
+        Sensey.getInstance().startWristTwistDetection(new WristTwistDetector.WristTwistListener() {
+            @Override public void onWristTwist() {
                 startActivity(new Intent(getBaseContext(), MainActivity.class));
             }
         });
+
         return START_STICKY;
     }
 }

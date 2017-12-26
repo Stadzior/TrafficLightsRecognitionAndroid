@@ -1,7 +1,7 @@
 package project.advancedmobileapplications.trafficlightsrecognitionandroid.enums;
 
 /**
- * Created by patry on 15.10.2017.
+ * Created by Patryk Rutkowski on 15.10.2017.
  */
 
 public enum LightColor {

@@ -17,7 +17,7 @@ import project.advancedmobileapplications.trafficlightsrecognitionandroid.fragme
 import project.advancedmobileapplications.trafficlightsrecognitionandroid.fragments.TakenPhotoFragment;
 import project.advancedmobileapplications.trafficlightsrecognitionandroid.interfaces.CameraViewListener;
 import project.advancedmobileapplications.trafficlightsrecognitionandroid.interfaces.TTSListener;
-import project.advancedmobileapplications.trafficlightsrecognitionandroid.services.ShakeService;
+import project.advancedmobileapplications.trafficlightsrecognitionandroid.services.WristTwistGestureService;
 
 public class MainActivity extends AppCompatActivity implements CameraViewListener, TTSListener {
 
@@ -27,7 +27,7 @@ public class MainActivity extends AppCompatActivity implements CameraViewListene
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        startService(new Intent(this, ShakeService.class));
+        startService(new Intent(this, WristTwistGestureService.class));
         ButterKnife.bind(this);
         if (getSupportActionBar() != null)
             getSupportActionBar().hide();
